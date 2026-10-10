@@ -21,7 +21,7 @@ import zipfile
 
 DOSSIER = os.path.dirname(os.path.abspath(__file__))
 # outils de publication : inutiles chez les utilisateurs
-EXCLUS = {"publier.py", ".gitignore"}
+EXCLUS = {"publier.py", ".gitignore", ".gitattributes"}
 
 
 def git(*args):
