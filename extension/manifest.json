@@ -1,0 +1,78 @@
+{
+  "manifest_version": 3,
+  "name": "En Écoute",
+  "version": "1.0.0",
+  "description": "Envoie le morceau joué sur Deezer, Spotify, YouTube Music et Apple Music vers OBS.",
+  "icons": {
+    "16": "icones/16.png",
+    "32": "icones/32.png",
+    "48": "icones/48.png",
+    "128": "icones/128.png"
+  },
+  "permissions": [
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "https://open.spotify.com/*",
+    "https://www.deezer.com/*",
+    "https://music.youtube.com/*",
+    "https://music.apple.com/*",
+    "https://beta.music.apple.com/*"
+  ],
+  "background": {
+    "service_worker": "fond.js",
+    "scripts": [
+      "fond.js"
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://open.spotify.com/*",
+        "https://www.deezer.com/*",
+        "https://music.youtube.com/*",
+        "https://music.apple.com/*",
+        "https://beta.music.apple.com/*"
+      ],
+      "js": [
+        "page.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://open.spotify.com/*",
+        "https://www.deezer.com/*",
+        "https://music.youtube.com/*",
+        "https://music.apple.com/*",
+        "https://beta.music.apple.com/*"
+      ],
+      "js": [
+        "relais.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_title": "En Écoute",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icones/16.png",
+      "32": "icones/32.png"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "en-ecoute@extension",
+      "strict_min_version": "128.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  }
+}

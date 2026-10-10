@@ -1,0 +1,7 @@
+sortie/
+dist/
+__pycache__/
+*.pyc
+*.tmp
+.maj-ignoree
+en-ecoute-extension.zip

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { color-scheme: dark; }
+  body {
+    width: 290px;
+    margin: 0;
+    padding: 14px;
+    background: #141417;
+    color: #f2f2f4;
+    font: 13px/1.4 "Segoe UI", system-ui, sans-serif;
+  }
+  h1 { margin: 0 0 10px; font-size: 15px; font-weight: 650; }
+  .ligne { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .pastille { width: 9px; height: 9px; border-radius: 50%; background: #66666e; flex: none; }
+  .pastille.ok { background: #2fd27a; }
+  .pastille.ko { background: #ff5a5a; }
+  .morceau {
+    padding: 10px;
+    border-radius: 10px;
+    background: #1e1e23;
+    margin-bottom: 12px;
+  }
+  .service { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #9a9aa3; }
+  .titre { font-weight: 600; margin-top: 2px; }
+  .artiste { color: #b9b9c1; }
+  .vide { color: #9a9aa3; }
+  label { display: block; color: #9a9aa3; font-size: 12px; margin-bottom: 4px; }
+  .port { display: flex; gap: 6px; }
+  input {
+    width: 90px;
+    padding: 5px 8px;
+    border: 1px solid #34343b;
+    border-radius: 7px;
+    background: #1e1e23;
+    color: inherit;
+    font: inherit;
+  }
+  button {
+    padding: 5px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: #3a3a43;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  button:hover { background: #4a4a55; }
+  .aide { margin-top: 12px; font-size: 11.5px; color: #85858e; }
+  .maj {
+    display: none;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    background: #2a2140;
+    color: #e4dcff;
+    font-size: 12px;
+  }
+  .maj.visible { display: block; }
+  .maj a { color: #c9b5ff; }
+  .version { margin-top: 8px; font-size: 11px; color: #5f5f68; }
+</style>
+</head>
+<body>
+  <h1>En Écoute</h1>
+
+  <div class="ligne">
+    <span class="pastille" id="pastille"></span>
+    <span id="statut">Recherche du pont…</span>
+  </div>
+
+  <div class="morceau" id="morceau"><span class="vide">Rien en cours</span></div>
+
+  <div class="maj" id="maj"></div>
+
+  <label for="port">Port du pont</label>
+  <div class="port">
+    <input id="port" type="number" min="1024" max="65535">
+    <button id="enregistrer">Enregistrer</button>
+  </div>
+
+  <p class="aide">Le pont se lance avec OBS (script en-ecoute.lua) ou à la main avec
+    <code>python pont.py</code>. Garde le même port des deux côtés.</p>
+  <p class="version" id="version"></p>
+
+  <script src="popup.js"></script>
+</body>
+</html>

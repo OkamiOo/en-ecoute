@@ -1,0 +1,10 @@
+{
+  "port": 4489,
+  "sortie": "",
+  "format": "{artiste} - {titre}",
+  "texte_vide": "",
+  "cacher_pause": true,
+  "delai_masquage": 3,
+  "secours_windows": false,
+  "quitter_avec_obs": true
+}

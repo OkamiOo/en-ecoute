@@ -1,0 +1,300 @@
+/* ------------------------------------------------------------------
+   En Écoute - feuille de style
+   Tout est pilotable depuis l'URL de la source Navigateur (voir README).
+   ------------------------------------------------------------------ */
+
+:root {
+  --accent: #8f5bff;          /* remplace par la couleur dominante de la pochette */
+  --accent-soft: rgba(143, 91, 255, .35);
+  /* Ces deux variables sont assemblees au point d'usage (.card) et non ici :
+     une variable qui en reference une autre est resolue la ou elle est
+     declaree, donc un --bg tout pret sur :root ignorerait toute surcharge. */
+  --bg-rgb: 18, 18, 20;       /* couleur du fond de la carte */
+  --bg-alpha: 1;              /* pilote par le reglage "Opacite du fond" */
+  --blur: 0px;                /* flou d'arriere-plan, actif seulement si translucide */
+  --fg: #ffffff;
+  --fg-dim: rgba(255, 255, 255, .62);
+  --radius: 18px;
+  --art: 86px;
+  --pad: 14px;
+  --font: "Segoe UI Variable Display", "Segoe UI", Inter, -apple-system,
+          "Helvetica Neue", Arial, sans-serif;
+  --enter: cubic-bezier(.22, 1, .36, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: transparent;      /* indispensable pour OBS */
+  overflow: hidden;
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px;
+}
+body[data-align="right"]  { justify-content: flex-end; }
+body[data-align="center"] { justify-content: center; }
+
+/* ---------------------------------------------------------------- carte */
+
+.card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--pad);
+  max-width: 100%;
+  padding: var(--pad);
+  border-radius: var(--radius);
+  background: rgba(var(--bg-rgb), var(--bg-alpha));
+  backdrop-filter: blur(var(--blur)) saturate(160%);
+  box-shadow:
+    0 10px 34px rgba(0, 0, 0, .45),
+    0 0 0 1px rgba(255, 255, 255, .07) inset;
+  color: var(--fg);
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  transition:
+    opacity .45s var(--enter),
+    transform .45s var(--enter);
+  overflow: hidden;
+}
+
+/* état masqué : glisse vers le bas et disparaît */
+.card.hidden {
+  opacity: 0;
+  transform: translateY(18px) scale(.97);
+  pointer-events: none;
+}
+
+/* halo coloré tiré de la pochette */
+.glow {
+  position: absolute;
+  inset: -40% -10% auto -30%;
+  height: 180%;
+  background: radial-gradient(
+    60% 60% at 18% 50%, var(--accent-soft), transparent 70%);
+  opacity: .9;
+  transition: background .8s ease;
+  pointer-events: none;
+}
+
+/* thèmes ------------------------------------------------------------- */
+
+body[data-theme="light"] {
+  --bg-rgb: 252, 252, 253;
+}
+body[data-theme="light"] .card {
+  color: #101014;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .18), 0 0 0 1px rgba(0, 0, 0, .06) inset;
+}
+body[data-theme="light"] .artist,
+body[data-theme="light"] .source,
+body[data-theme="light"] .times { color: rgba(10, 10, 15, .58); }
+body[data-theme="light"] .bar   { background: rgba(0, 0, 0, .12); }
+
+body[data-theme="clean"] .card {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+body[data-theme="clean"] .art-wrap { box-shadow: none; }
+body[data-theme="clean"] .glow { display: none; }
+body[data-theme="clean"] .title,
+body[data-theme="clean"] .artist {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, .85), 0 0 2px rgba(0, 0, 0, .9);
+}
+
+/* ------------------------------------------------------------ pochette */
+
+.art-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--art);
+  height: var(--art);
+  border-radius: calc(var(--radius) - 7px);
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .45), 0 0 0 1px rgba(255, 255, 255, .08);
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.art.show { opacity: 1; }
+
+.art-fallback {
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  background: linear-gradient(140deg, var(--accent), rgba(0, 0, 0, .55));
+}
+.art-fallback.hide { opacity: 0; }
+.art-fallback svg {
+  width: 44%;
+  height: 44%;
+  fill: none;
+  stroke: rgba(255, 255, 255, .9);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body[data-art="0"] .art-wrap { display: none; }
+
+/* ---------------------------------------------------------------- texte */
+
+.info {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 13px;
+}
+
+.source {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+/* égaliseur animé */
+.eq { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
+.eq i {
+  width: 2.5px;
+  height: 30%;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: bounce .9s ease-in-out infinite;
+}
+.eq i:nth-child(2) { animation-delay: .18s; }
+.eq i:nth-child(3) { animation-delay: .36s; }
+.eq i:nth-child(4) { animation-delay: .54s; }
+.card.paused .eq i { animation-play-state: paused; height: 22%; }
+
+@keyframes bounce {
+  0%, 100% { height: 22%; }
+  50%      { height: 100%; }
+}
+
+.title-wrap { overflow: hidden; }
+
+.title {
+  font-size: 19px;
+  font-weight: 650;
+  line-height: 1.24;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* défilement uniquement si le titre déborde */
+.title.scroll span {
+  display: inline-block;
+  padding-right: 48px;
+  animation: marquee var(--scroll-time, 12s) linear infinite;
+}
+@keyframes marquee {
+  0%, 8%    { transform: translateX(0); }
+  92%, 100% { transform: translateX(var(--scroll-dist, 0px)); }
+}
+
+.artist {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--fg-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------------------------------------------------------ progression */
+
+.progress { margin-top: 7px; }
+body[data-progress="0"] .progress { display: none; }
+
+.bar {
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .18);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #fff));
+  box-shadow: 0 0 10px var(--accent-soft);
+  transition: width .25s linear;
+}
+
+.times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-dim);
+}
+body[data-time="0"] .times { display: none; }
+
+/* ------------------------------------------------------- variantes mise en page */
+
+.card[data-layout="card"] {
+  flex-direction: column;
+  align-items: stretch;
+  width: 260px;
+  --art: 100%;
+}
+.card[data-layout="card"] .art-wrap { width: 100%; aspect-ratio: 1; height: auto; }
+.card[data-layout="card"] .title    { font-size: 17px; white-space: normal; }
+.card[data-layout="card"] .title-wrap { max-height: 2.5em; }
+
+.card[data-layout="minimal"] { --art: 56px; padding: 10px; gap: 10px; }
+.card[data-layout="minimal"] .title  { font-size: 15px; }
+.card[data-layout="minimal"] .artist { font-size: 12px; }
+.card[data-layout="minimal"] .progress,
+.card[data-layout="minimal"] .top    { display: none; }
+
+/* ------------------------------------------------------------- hors ligne */
+
+.offline {
+  position: fixed;
+  left: 8px;
+  bottom: 8px;
+  padding: 6px 11px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, .62);
+  color: rgba(255, 255, 255, .78);
+  font-size: 11.5px;
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+.offline.show { opacity: 1; }
+body[data-debug="0"] .offline { display: none; }
+
+/* position inconnue : on masque la barre plutot que d'afficher une valeur fausse */
+.card.no-progress .progress { display: none; }
