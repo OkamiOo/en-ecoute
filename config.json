@@ -6,5 +6,6 @@
   "cacher_pause": true,
   "delai_masquage": 3,
   "secours_windows": false,
-  "quitter_avec_obs": true
+  "quitter_avec_obs": true,
+  "mises_a_jour": "demander"
 }

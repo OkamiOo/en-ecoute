@@ -25,8 +25,10 @@ les données que de l'extension.
 
 ## Installation
 
-Garde le dossier entier au même endroit : le script OBS cherche `pont.py`,
-`web/` et `extension/` à côté de lui.
+Télécharge le zip de la [dernière version](https://github.com/OkamiOo/en-ecoute/releases/latest)
+et décompresse-le là où il restera. Garde le dossier entier au même endroit :
+le script OBS cherche `pont.py`, `web/` et `extension/` à côté de lui, et les
+mises à jour s'installent dedans.
 
 ### 1. Python
 
@@ -131,6 +133,7 @@ Quand rien ne joue, les fichiers sont vidés (et l'overlay se cache).
 | Texte de morceau.txt | modèle avec `{titre}`, `{artiste}`, `{album}`, `{service}` |
 | Dossier des fichiers texte | vide = `sortie` à côté du script |
 | Mode secours | voir plus haut |
+| Mises à jour | voir plus bas |
 | Port local | à changer seulement si 4489 est déjà pris, et à reporter dans l'extension (clic sur son icône) |
 
 ### Sans OBS
@@ -152,6 +155,8 @@ Les réglages se font dans `config.json` :
 | `delai_masquage` | `3` | secondes avant de masquer (évite un clignotement entre deux morceaux) |
 | `secours_windows` | `false` | mode secours |
 | `quitter_avec_obs` | `true` | lancé depuis OBS, le pont s'arrête avec lui |
+| `mises_a_jour` | `"demander"` | `demander`, `auto` ou `non` |
+| `depot` | `"OkamiOo/en-ecoute"` | dépôt GitHub où chercher les nouvelles versions |
 
 `python pont.py --help` liste les options de la ligne de commande, qui passent
 avant `config.json`.
@@ -167,6 +172,31 @@ http://127.0.0.1:4489/?layout=bar&theme=dark&opacity=100&align=left&accent=auto
 
 `width=520` fige la largeur de la carte, `debug=1` affiche un message si le pont
 ne répond pas.
+
+## Mises à jour
+
+À chaque démarrage, le pont regarde si une version plus récente est sortie sur
+ce dépôt. Ce qu'il fait ensuite dépend du réglage **Mises à jour** du panneau
+OBS :
+
+- **Me demander dans une fenêtre** (par défaut) : une fenêtre affiche les
+  nouveautés. *Oui* installe, *Non* ignore cette version, *Annuler* repose la
+  question au prochain lancement.
+- **Les installer toutes seules** : sans rien demander.
+- **Ne pas vérifier**.
+
+Le bouton **Vérifier les mises à jour** fait la même chose tout de suite, et
+repropose une version que tu avais ignorée.
+
+À l'installation, les fichiers du dossier sont remplacés (ton `config.json` n'est
+jamais touché), le pont redémarre, et l'extension se recharge d'elle-même si tu
+l'as chargée depuis ce dossier. Les onglets de musique déjà ouverts continuent
+de remonter sans qu'il faille les recharger. Seul le script OBS attend le
+prochain démarrage d'OBS (ou un clic sur la flèche de rechargement dans
+Outils → Scripts).
+
+Avec la version signée de Firefox, l'extension ne peut pas se remplacer seule :
+sa fenêtre signale la nouvelle version et donne le lien pour la télécharger.
 
 ## Bon à savoir
 
@@ -200,12 +230,30 @@ lecteurs), il suffit de l'ajouter à trois endroits :
 
 Puis recharge l'extension depuis la page des extensions du navigateur.
 
+## Publier une version
+
+Pour le mainteneur, avec `gh` connecté au compte GitHub :
+
+```
+python publier.py 1.1.0 "Ce qui change, en deux mots"
+```
+
+Le numéro passe dans `version.txt` et dans le manifeste de l'extension, le zip
+est construit avec les fichiers suivis par git, puis commit, étiquette, push et
+Release. Les installations la voient à leur démarrage suivant.
+
+Une règle à garder : les options de `pont.py` doivent rester compatibles d'une
+version à l'autre, car le script OBS d'avant la mise à jour continue de lancer
+le pont jusqu'au redémarrage d'OBS.
+
 ## Fichiers
 
 | Fichier | Rôle |
 |---|---|
 | `en-ecoute.lua` | script OBS : démarre et arrête le pont, crée la source, panneau de réglages |
-| `pont.py` | le pont local |
+| `pont.py` | le pont local, et l'installation des mises à jour |
 | `config.json` | réglages du pont lancé sans OBS |
+| `version.txt` | version installée |
 | `web/` | l'overlay affiché par OBS |
 | `extension/` | l'extension de navigateur |
+| `publier.py` | publication d'une version (mainteneur) |
