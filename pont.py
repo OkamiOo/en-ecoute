@@ -206,6 +206,7 @@ class Onglets:
                 "position": None if position is None else nombre(position),
                 "vitesse": nombre(d.get("vitesse"), 1.0) or 1.0,
                 "en_lecture": en_lecture,
+                "extension": texte(d.get("ext"), 20),
                 "recu": maintenant,
                 "debut": debut,
                 "derniere_lecture": derniere,
@@ -929,7 +930,7 @@ class Gestionnaire(BaseHTTPRequestHandler):
         if chemin == "/api/now":
             return self._json(ctx["etat"].snapshot())
         if chemin == "/api/onglets":
-            return self._json([{k: o[k] for k in ("service", "titre", "artiste", "en_lecture")}
+            return self._json([{k: o[k] for k in ("service", "titre", "artiste", "en_lecture", "extension")}
                                for o in ctx["onglets"].liste()])
         if chemin == "/api/version":
             maj = ctx["maj"].disponible

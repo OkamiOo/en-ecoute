@@ -78,7 +78,7 @@ api.runtime.onMessage.addListener((message, sender) => {
     const onglet = r.id + "-" + tab.id;
     if (message.type === "etat") {
       onglets.add(tab.id);
-      poster("/api/maj", Object.assign({}, message.etat, { onglet }));
+      poster("/api/maj", Object.assign({}, message.etat, { onglet, ext: api.runtime.getManifest().version }));
     } else if (message.type === "fermeture") {
       onglets.delete(tab.id);
       poster("/api/fermer", { onglet });
