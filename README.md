@@ -23,6 +23,10 @@ pont.py (127.0.0.1:4489) ──► source Navigateur d'OBS
 Tout reste sur ta machine : le pont n'écoute que sur `127.0.0.1` et n'accepte
 les données que de l'extension.
 
+Si tu utilises [Akibot](https://akibot.akiden.fr), tu peux te passer du pont et
+de Python : l'extension envoie directement au widget **Musique en cours** de
+l'éditeur d'overlays (voir [Avec Akibot](#avec-akibot)).
+
 ## Installation
 
 Télécharge le zip de la [dernière version](https://github.com/OkamiOo/en-ecoute/releases/latest)
@@ -96,6 +100,26 @@ Python nécessaires (une vingtaine de secondes).
 
 Lance un morceau, puis clique sur l'icône de l'extension : elle doit afficher
 **Pont connecté** et le titre en cours.
+
+## Avec Akibot
+
+Pas besoin de Python ni du script OBS dans ce cas, seulement de l'extension.
+
+1. Dans l'éditeur d'overlays d'Akibot, ajoute le widget **Musique en cours** et
+   copie le **lien pour l'extension En Écoute**.
+2. Clique sur l'icône de l'extension, colle le lien dans **Lien Akibot**, puis
+   **OK**. Firefox te demande alors l'autorisation d'envoyer le contenu des
+   pages de musique à Akibot.
+3. Lance un morceau : la fenêtre de l'extension affiche **Akibot reçoit la
+   musique**, et le widget s'anime dans OBS.
+
+Ce lien est un secret, comme l'adresse d'un overlay : quelqu'un qui l'a peut
+afficher n'importe quel titre sur ton stream. S'il fuite, régénère-le dans
+l'éditeur et recolle le nouveau.
+
+Seuls le service, le titre, l'artiste, l'album, l'adresse de la pochette et la
+position de lecture partent vers Akibot, et rien du tout tant qu'aucun lien n'est
+collé. Le pont local et Akibot peuvent fonctionner en même temps.
 
 ## Dans OBS
 

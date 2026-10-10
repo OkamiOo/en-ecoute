@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "En Écoute",
   "version": "1.0.0",
-  "description": "Envoie le morceau joué sur Deezer, Spotify, YouTube Music et Apple Music vers OBS.",
+  "description": "Envoie le morceau joué sur Deezer, Spotify, YouTube Music et Apple Music vers OBS ou Akibot.",
   "icons": {
     "16": "icones/16.png",
     "32": "icones/32.png",
@@ -19,7 +19,8 @@
     "https://www.deezer.com/*",
     "https://music.youtube.com/*",
     "https://music.apple.com/*",
-    "https://beta.music.apple.com/*"
+    "https://beta.music.apple.com/*",
+    "https://akibot.akiden.fr/*"
   ],
   "background": {
     "service_worker": "fond.js",
@@ -71,6 +72,9 @@
       "data_collection_permissions": {
         "required": [
           "none"
+        ],
+        "optional": [
+          "websiteContent"
         ]
       }
     }

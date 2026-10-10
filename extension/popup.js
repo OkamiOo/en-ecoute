@@ -26,6 +26,8 @@ function afficherMorceau(etat, nbOnglets) {
   }
 }
 
+let avecAkibot = false;
+
 async function interroger(port) {
   const base = "http://127.0.0.1:" + port;
   try {
@@ -37,11 +39,77 @@ async function interroger(port) {
     $("statut").textContent = "Pont connecté (port " + port + ")";
     afficherMorceau(etat, onglets.length);
   } catch (_) {
-    $("pastille").className = "pastille ko";
-    $("statut").textContent = "Pont injoignable sur le port " + port;
+    // sans pont local, ce n'est une erreur que si Akibot n'est pas utilisé
+    $("pastille").className = avecAkibot ? "pastille" : "pastille ko";
+    $("statut").textContent = avecAkibot
+      ? "Pont local non utilisé"
+      : "Pont injoignable sur le port " + port;
     afficherMorceau(null, 0);
   }
 }
+
+// ------------------------------------------------------------------ Akibot
+
+const LIEN_AKIBOT = /^https:\/\/akibot\.akiden\.fr\/\S+$/;
+
+function afficherEtatAkibot(lien, statut) {
+  const zone = $("etatAkibot");
+  zone.className = "etat-akibot";
+  if (!lien) {
+    zone.textContent = "";
+    return;
+  }
+  if (!statut) {
+    zone.textContent = "En attente d'un morceau à envoyer.";
+  } else if (statut.code >= 200 && statut.code < 300) {
+    zone.className = "etat-akibot ok";
+    zone.textContent = "Akibot reçoit la musique.";
+  } else if (statut.code === 404) {
+    zone.className = "etat-akibot ko";
+    zone.textContent = "Lien refusé par Akibot : recopie-le depuis l'éditeur (il a peut-être été régénéré).";
+  } else if (statut.code === 0) {
+    zone.className = "etat-akibot ko";
+    zone.textContent = "Akibot injoignable pour l'instant.";
+  } else {
+    zone.className = "etat-akibot ko";
+    zone.textContent = "Akibot a répondu " + statut.code + ".";
+  }
+}
+
+async function rafraichirAkibot() {
+  const r = await api.storage.local.get({ akibot: "", akibotStatut: null });
+  avecAkibot = Boolean(r.akibot);
+  afficherEtatAkibot(r.akibot, r.akibotStatut);
+}
+
+$("enregistrerAkibot").addEventListener("click", () => {
+  const lien = $("akibot").value.trim();
+  if (lien && !LIEN_AKIBOT.test(lien)) {
+    afficherEtatAkibot(lien, null);
+    $("etatAkibot").className = "etat-akibot ko";
+    $("etatAkibot").textContent = "Ce n'est pas un lien Akibot (il commence par https://akibot.akiden.fr/).";
+    return;
+  }
+  const enregistrer = () => api.storage.local.set({ akibot: lien, akibotStatut: null }).then(rafraichirAkibot);
+  // Firefox veut un accord avant que le contenu d'un site parte ailleurs que sur
+  // la machine ; la demande doit partir directement du clic
+  let demande = null;
+  if (lien && api.runtime.getBrowserInfo) {
+    try {
+      demande = api.permissions.request({ data_collection: ["websiteContent"] });
+    } catch (_) {
+      demande = null;
+    }
+  }
+  if (!demande) {
+    enregistrer();
+    return;
+  }
+  demande.then((accorde) => {
+    if (accorde) enregistrer();
+    else $("etatAkibot").textContent = "Sans ton accord, Firefox ne laisse rien partir vers Akibot.";
+  }).catch(enregistrer);
+});
 
 // ---------------------------------------------------------- mises à jour
 
@@ -103,12 +171,17 @@ async function chercherMiseAJour(port) {
 
 let port = 4489;
 
-api.storage.local.get({ port }).then((r) => {
+api.storage.local.get({ port, akibot: "" }).then(async (r) => {
   port = r.port;
   $("port").value = port;
+  $("akibot").value = r.akibot;
+  await rafraichirAkibot();
   interroger(port);
   chercherMiseAJour(port);
-  setInterval(() => interroger(port), 1500);
+  setInterval(() => {
+    interroger(port);
+    rafraichirAkibot();
+  }, 1500);
 });
 
 $("enregistrer").addEventListener("click", () => {
