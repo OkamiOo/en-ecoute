@@ -23,7 +23,7 @@ function charger() {
   if (!reglages) {
     reglages = api.storage.local.get({ port: PORT_DEFAUT, id: "", akibot: "" }).then(async (r) => {
       if (!r.id) {
-        r.id = Math.random().toString(36).slice(2, 10);
+        r.id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
         await api.storage.local.set({ id: r.id });
       }
       return r;

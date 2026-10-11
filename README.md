@@ -105,8 +105,9 @@ Lance un morceau, puis clique sur l'icône de l'extension : elle doit afficher
 
 Pas besoin de Python ni du script OBS dans ce cas, seulement de l'extension.
 
-1. Dans l'éditeur d'overlays d'Akibot, ajoute le widget **Musique en cours** et
-   copie le **lien pour l'extension En Écoute**.
+1. Dans l'éditeur d'overlays d'Akibot, ajoute le widget **Musique en cours**.
+   Dans son panneau, section **Lien pour l'extension En Écoute**, clique sur
+   **Copier** (réservé au streamer et à ses modérateurs principaux).
 2. Clique sur l'icône de l'extension, colle le lien dans **Lien Akibot**, puis
    **OK**. Firefox te demande alors l'autorisation d'envoyer le contenu des
    pages de musique à Akibot.
