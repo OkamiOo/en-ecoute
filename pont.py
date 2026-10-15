@@ -1093,8 +1093,12 @@ def port_libre(port):
 def creer_paquet():
     cible = os.path.join(DOSSIER, "en-ecoute-extension.zip")
     with zipfile.ZipFile(cible, "w", zipfile.ZIP_DEFLATED) as zf:
-        for racine, _, fichiers in os.walk(EXTENSION):
+        for racine, dossiers, fichiers in os.walk(EXTENSION):
+            # seulement ce que charge le navigateur : ni fichiers cachés, ni notes, ni journaux
+            dossiers[:] = [d for d in dossiers if not d.startswith(".") and d != "__pycache__"]
             for nom in fichiers:
+                if nom.startswith(".") or nom.lower().endswith((".md", ".log", ".pid", ".tmp", ".pyc", "~")):
+                    continue
                 complet = os.path.join(racine, nom)
                 zf.write(complet, os.path.relpath(complet, EXTENSION).replace(os.sep, "/"))
     print("Paquet créé : " + cible)

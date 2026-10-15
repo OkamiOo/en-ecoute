@@ -1,13 +1,13 @@
 # En Écoute
 
-Affiche dans OBS le morceau que tu écoutes dans ton navigateur, sur **Deezer**,
-**Spotify**, **YouTube Music** ou **Apple Music** (versions web).
+Affiche dans OBS le morceau que tu écoutes dans ton navigateur, sur Deezer,
+Spotify, YouTube Music ou Apple Music (versions web).
 
 Deux pièces travaillent ensemble :
 
-- une **extension de navigateur** qui lit le morceau en cours dans l'onglet
+- une extension de navigateur qui lit le morceau en cours dans l'onglet
   (titre, artiste, album, pochette, position) ;
-- un **petit pont local** (`pont.py`) qui reçoit ces infos et les met à
+- un petit pont local (`pont.py`) qui reçoit ces infos et les met à
   disposition d'OBS : un overlay prêt à l'emploi, et des fichiers texte pour
   ceux qui préfèrent faire leur propre mise en page.
 

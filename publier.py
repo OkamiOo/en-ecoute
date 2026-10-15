@@ -20,8 +20,10 @@ import sys
 import zipfile
 
 DOSSIER = os.path.dirname(os.path.abspath(__file__))
-# outils de publication : inutiles chez les utilisateurs
-EXCLUS = {"publier.py", ".gitignore", ".gitattributes"}
+# outil de publication : inutile chez les utilisateurs
+EXCLUS = {"publier.py"}
+# journaux, caches, fichiers PID et temporaires
+SUFFIXES_EXCLUS = (".pyc", ".pyo", ".log", ".pid", ".tmp", ".bak", "~")
 
 
 def git(*args):
@@ -33,10 +35,34 @@ def version_tuple(v):
     return tuple(int(n) for n in v.split("."))
 
 
-def construire_zip(version):
+def a_livrer(rel):
+    # rien de caché (.git, .gitignore...) ni de cache Python, et pas d'autre
+    # .md que le README : le reste, ce sont des notes de travail
+    morceaux = rel.split("/")
+    if rel in EXCLUS or any(m.startswith(".") or m == "__pycache__" for m in morceaux):
+        return False
+    if rel.lower().endswith(".md") and rel != "README.md":
+        return False
+    return not rel.lower().endswith(SUFFIXES_EXCLUS)
+
+
+def fichiers_a_livrer():
+    fichiers = [f for f in git("ls-files").splitlines() if f and a_livrer(f)]
+    # aucun chemin de ce PC ne doit partir dans le zip
+    perso = os.path.expanduser("~").lower()
+    motifs = {perso.encode("utf-8"), perso.replace("\\", "/").encode("utf-8"),
+              perso.replace("\\", "\\\\").encode("utf-8")}
+    for rel in fichiers:
+        with open(os.path.join(DOSSIER, *rel.split("/")), "rb") as fh:
+            contenu = fh.read().lower()
+        if any(m in contenu for m in motifs):
+            sys.exit(rel + " contient un chemin de ce PC (" + perso + ") : à retirer avant de publier.")
+    return fichiers
+
+
+def construire_zip(version, fichiers):
     os.makedirs(os.path.join(DOSSIER, "dist"), exist_ok=True)
     cible = os.path.join(DOSSIER, "dist", "en-ecoute-" + version + ".zip")
-    fichiers = [f for f in git("ls-files").splitlines() if f and f not in EXCLUS]
     with zipfile.ZipFile(cible, "w", zipfile.ZIP_DEFLATED) as zf:
         for rel in fichiers:
             zf.write(os.path.join(DOSSIER, *rel.split("/")), rel)
@@ -65,6 +91,7 @@ def main():
     if sale and not args.sans_publier:
         sys.exit("Des changements ne sont pas commités :\n" + sale
                  + "\nCommite-les d'abord : la version publiée doit être celle du dépôt.")
+    fichiers = fichiers_a_livrer()
 
     with open(os.path.join(DOSSIER, "version.txt"), "w", encoding="utf-8", newline="\n") as fh:
         fh.write(args.version + "\n")
@@ -75,7 +102,7 @@ def main():
     with open(chemin_manifeste, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(manifeste)
 
-    zip_, nb = construire_zip(args.version)
+    zip_, nb = construire_zip(args.version, fichiers)
     print("Zip : " + zip_ + " (" + str(nb) + " fichiers)")
     if args.sans_publier:
         return 0

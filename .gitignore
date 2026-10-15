@@ -1,7 +1,16 @@
 sortie/
 dist/
+build/
 __pycache__/
 *.pyc
 *.tmp
+*.log
+*.pid
 .maj-ignoree
 en-ecoute-extension.zip
+# seul le README est publié : pas de notes ni de dossiers cachés
+*.md
+!README.md
+.*
+!.gitignore
+!.gitattributes
